@@ -116,11 +116,13 @@ app.get("/api/students/:studentId", (req, res) => {
 app.put("/api/students/:studentId", (req, res) => {
   const studentId = req.params.studentId;
 
-  Student.findById(studentId)
-    .findByIdAndUpdate(studentId, req.body, { new: true })
+  Student.findByIdAndUpdate(studentId, req.body, { new: true })
     .then((updatedStudent) => {
+      if (!updatedStudent) {
+        return res.status(404).json({ error: "Student not found" });
+      }
       console.log("Updated student ->", updatedStudent);
-      res.status(204).json(updatedStudent);
+      res.status(200).json(updatedStudent);
     })
     .catch((error) => {
       console.log("Error while updating the student ->", error);
@@ -185,16 +187,15 @@ app.get("/api/cohorts/:cohortId", (req, res) => {
 
 // PUT /api/cohorts/:cohortId - Updates a specific cohort by id
 app.put("/api/cohorts/:cohortId", (req, res) => {
-  const cohortID = req.params.cohortId;
+  const cohortId = req.params.cohortId;
 
-  Cohort.findById(cohortID)
-    .findByIdAndUpdate(cohortID, req.body, { new: true })
+  Cohort.findByIdAndUpdate(cohortId, req.body, { new: true })
     .then((updatedCohort) => {
       console.log("Updated cohort ->", updatedCohort);
-      res.status(204).json(updatedCohort);
+      res.status(200).json(updatedCohort); // Verwende den Statuscode 200 für erfolgreiche Aktualisierungen
     })
     .catch((error) => {
-      console.log("Error while updating the cohort ->", error);
+      console.error("Error while updating the cohort ->", error);
       res.status(500).json({ error: "Failed to update the cohort" });
     });
 });
@@ -211,6 +212,8 @@ app.delete("/api/cohorts/:cohortId", (req, res) => {
       res.status(500).json({ error: "Deleting cohort failed" });
     });
 });
+
+require("./error-handling")(app);
 
 // START SERVER
 app.listen(PORT, () => {
