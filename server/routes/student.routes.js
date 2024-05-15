@@ -8,7 +8,6 @@ const Student = require("../models/Student.model");
 const Cohort = require("../models/Cohort.model");
 
 //  POST /api/students  -  Creates a new project
-
 router.post("/students", (req, res) => {
   Student.create(req.body)
     .then((createdStudent) => {
