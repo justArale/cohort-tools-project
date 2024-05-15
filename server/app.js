@@ -53,95 +53,9 @@ app.get("/docs", (req, res) => {
 });
 
 // Student Routes
-// POST /api/students - Creates a new student
-app.post("/api/students", (req, res) => {
-  Student.create(req.body)
-    .then((createdStudent) => {
-      console.log("Student created ->", createdStudent);
-      res.status(201).json(createdStudent);
-    })
-    .catch((error) => {
-      console.log("Error while creating the student ->", error);
-      res.status(500).json({ error: "Failed to create the student" });
-    });
-});
 
-// GET /api/students - Retrieves all of the students in the database collection
-app.get("/api/students", (req, res) => {
-  Student.find({})
-    .populate("cohort")
-    .then((students) => {
-      console.log("Retrieved students ->", students);
-      res.json(students);
-    })
-    .catch((error) => {
-      console.log("Error while retrieving students ->", error);
-      res.status(500).json({ error: "Failed to retrieve students" });
-    });
-});
-
-// GET /api/students/cohort/:cohortId - Retrieves all of the students for a given cohort
-app.get("/api/students/cohort/:cohortId", (req, res) => {
-  const cohortId = req.params.cohortId;
-
-  Student.find({ Cohort: cohortId })
-    .populate("cohort")
-    .then((student) => {
-      console.log("Retrieved student ->", student);
-      res.status(200).json(student);
-    })
-    .catch((error) => {
-      console.log("Error while retrieving student ->", error);
-      res.status(500).json({ error: "Failed to retrieve student" });
-    });
-});
-
-// GET /api/students/:studentId - Retrieves a specific student by id
-app.get("/api/students/:studentId", (req, res) => {
-  const studentId = req.params.studentId;
-
-  Student.findById(studentId)
-    .populate("cohort")
-    .then((student) => {
-      console.log("Retrieved student ->", student);
-      res.status(200).json(student);
-    })
-    .catch((error) => {
-      console.log("Error while retrieving student ->", error);
-      res.status(500).json({ error: "Failed to retrieve student" });
-    });
-});
-
-// PUT /api/students/:studentId - Updates a specific student by id
-app.put("/api/students/:studentId", (req, res) => {
-  const studentId = req.params.studentId;
-
-  Student.findByIdAndUpdate(studentId, req.body, { new: true })
-    .then((updatedStudent) => {
-      if (!updatedStudent) {
-        return res.status(404).json({ error: "Student not found" });
-      }
-      console.log("Updated student ->", updatedStudent);
-      res.status(200).json(updatedStudent);
-    })
-    .catch((error) => {
-      console.log("Error while updating the student ->", error);
-      res.status(500).json({ error: "Failed to update the student" });
-    });
-});
-
-// DELETE /api/students/:studentId - Deletes a specific student by id
-app.delete("/api/students/:studentId", (req, res) => {
-  Student.findByIdAndDelete(req.params.studentId)
-    .then((result) => {
-      console.log("Student deleted!");
-      res.status(204).send(); // Send back only status code 204 indicating that resource is deleted
-    })
-    .catch((error) => {
-      console.log("Error while deleting the student ->", error);
-      res.status(500).json({ error: "Deleting student failed" });
-    });
-});
+const studentRouter = require("./routes/student.routes"); // <== IMPORT
+app.use("/api", studentRouter);
 
 // Cohort Routes
 // POST /api/cohorts - Creates a new cohort
