@@ -5,9 +5,6 @@ const cors = require("cors");
 const PORT = 5005;
 const mongoose = require("mongoose");
 
-const Student = require("./models/Student.model");
-const Cohort = require("./models/Cohort.model");
-
 mongoose
   .connect("mongodb://127.0.0.1:27017/cohort-tools-api")
   .then((x) => console.log(`Connected to Database: "${x.connections[0].name}"`))
@@ -15,9 +12,7 @@ mongoose
 
 // STATIC DATA
 // Devs Team - Import the provided files with JSON data of students and cohorts here:
-// const cohorts = require("./cohorts.json");
-// const students = require("./students.json");
-
+const { isAuthenticated } = require("./middleware/jwt.middleware");
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();
 
@@ -57,12 +52,20 @@ const indexRoutes = require("./routes/index.routes");
 app.use("/api", indexRoutes);
 
 // Student Routes
-const studentRouter = require("./routes/student.routes"); // <== IMPORT
+const studentRouter = require("./routes/student.routes");
 app.use("/api", studentRouter);
 
 // Cohort Routes
 const cohortRouter = require("./routes/cohort.routes");
 app.use("/api", cohortRouter);
+
+// Auth Routes
+const authRouter = require("./routes/auth.routes");
+app.use("/auth", authRouter);
+
+// User Routes - Nach den Authentifizierungsrouten platzieren, um Endlosschleifen zu vermeiden
+const userRouter = require("./routes/user.routes");
+app.use("/api", isAuthenticated, userRouter);
 
 require("./error-handling")(app);
 
