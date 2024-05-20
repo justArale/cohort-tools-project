@@ -57,7 +57,7 @@ router.get("/cohorts/:cohortId", (req, res) => {
 router.put("/cohorts/:cohortId", (req, res) => {
   const cohortId = req.params.cohortId;
 
-  if (!mongoose.Types.ObjectId.isValid(cohortID)) {
+  if (!mongoose.Types.ObjectId.isValid(cohortId)) {
     res.status(400).json({ message: "Specified id is not valid" });
     return;
   }
